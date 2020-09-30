@@ -23,6 +23,7 @@ RUN git config --global user.email "tkp@kirkdesigns.co.uk" \
   && git fetch lnzap \
   && git cherry-pick 77177aba114639a9c670757a38b96c81523688cd \
   && git cherry-pick fa327664d89d3938167fa21cac47bffe5f9e605a \
+  && git cherry-pick e8a7e95fc5fc3531f31bee3009d2dbfc9ba920ef \
   && make \
   && make install tags="experimental monitoring autopilotrpc chainrpc invoicesrpc routerrpc signrpc walletrpc watchtowerrpc wtclientrpc" \
   && cp /go/bin/lncli /bin/ \
