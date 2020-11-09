@@ -24,6 +24,7 @@ RUN git config --global user.email "tkp@kirkdesigns.co.uk" \
   && git cherry-pick b2d73cc49d908110d2b64f19a594ccaa65fff519 \
   && git cherry-pick 1627b5989ef8c59a4e5df6e104006feb973cb477 \
   && git cherry-pick 9fc02c041e5ba6fe215207a854b49d533283c22a \
+  && git cherry-pick b305c99fb1315bec207e41a80224c94323510d3b \
   && make \
   && make install tags="experimental monitoring autopilotrpc chainrpc invoicesrpc routerrpc signrpc walletrpc watchtowerrpc wtclientrpc" \
   && cp /go/bin/lncli /bin/ \
