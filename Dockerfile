@@ -22,6 +22,7 @@ RUN git config --global user.email "tkp@kirkdesigns.co.uk" \
   && git remote add lnzap https://github.com/LN-Zap/lnd \
   && git fetch lnzap \
   && git cherry-pick b305c99fb1315bec207e41a80224c94323510d3b \
+  && git cherry-pick 28f7d7253a2492086268cbaaea18e7e86edbe9d7 \
   && make \
   && make install tags="monitoring autopilotrpc chainrpc invoicesrpc routerrpc signrpc verrpc walletrpc watchtowerrpc wtclientrpc" \
   && cp /go/bin/lncli /bin/ \
