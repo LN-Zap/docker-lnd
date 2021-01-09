@@ -18,7 +18,7 @@ WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 RUN git config --global user.email "tkp@kirkdesigns.co.uk" \
   && git config --global user.name "Tom Kirkpatrick" \
   && git clone https://github.com/lightningnetwork/lnd . \
-  && git reset --hard v0.12.0-beta.rc2 \
+  && git reset --hard v0.12.0-beta.rc5 \
   && git remote add lnzap https://github.com/LN-Zap/lnd \
   && git fetch lnzap \
   && git cherry-pick b305c99fb1315bec207e41a80224c94323510d3b \
