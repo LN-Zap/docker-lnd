@@ -18,11 +18,11 @@ WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 RUN git config --global user.email "tkp@kirkdesigns.co.uk" \
   && git config --global user.name "Tom Kirkpatrick" \
   && git clone https://github.com/lightningnetwork/lnd . \
-  && git reset --hard v0.12.0-beta.rc5 \
+  && git reset --hard v0.12.0-beta \
   && git remote add lnzap https://github.com/LN-Zap/lnd \
   && git fetch lnzap \
-  && git cherry-pick b305c99fb1315bec207e41a80224c94323510d3b \
-  && git cherry-pick 28f7d7253a2492086268cbaaea18e7e86edbe9d7 \
+  && git cherry-pick b866eedfec0ef34324a3d0169dd1fc3188b3dcb2 \
+  && git cherry-pick 2dd7792053447da5c0dd11eba359a3429994ef8d \
   && make \
   && make install tags="monitoring autopilotrpc chainrpc invoicesrpc routerrpc signrpc verrpc walletrpc watchtowerrpc wtclientrpc" \
   && cp /go/bin/lncli /bin/ \
