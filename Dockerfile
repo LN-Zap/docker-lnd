@@ -1,5 +1,5 @@
 # Builder image
-FROM golang:1.14.5-alpine as builder
+FROM golang:1.15.7-alpine as builder
 MAINTAINER Tom Kirkpatrick <tkp@kirkdesigns.co.uk>
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
