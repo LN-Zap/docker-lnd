@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Do nothing if the PASSWORD var is not set.
 if [ -z "$PASSWORD" ]; then
@@ -11,12 +12,6 @@ if [ -z "$RESTPORT" ]; then
   echo "[lnd_unlock] Please set RESTPORT in order to unlock wallet automatically."
   exit 1
 fi
-
-# output script content for easier debugging.
-# set -x
-
-# exit from script if error was raised.
-set -e
 
 # return is used within bash function in order to return the value.
 return() {

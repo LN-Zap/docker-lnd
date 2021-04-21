@@ -1,6 +1,5 @@
 #!/bin/bash
-
-set -ex
+set -e
 
 # Generate lnd.conf
 lnd_init

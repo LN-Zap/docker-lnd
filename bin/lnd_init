@@ -1,6 +1,5 @@
 #!/bin/bash
-
-set -ex
+set -e
 
 # This shouldn't be in the Dockerfile or containers built from the same image
 # will have the same credentials.
