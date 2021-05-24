@@ -37,10 +37,7 @@ RUN git config --global user.email "tkp@kirkdesigns.co.uk" \
 # Grab and install the latest version of lndconnect.
 WORKDIR $GOPATH/src/github.com/LN-Zap/lndconnect
 RUN git clone https://github.com/LN-Zap/lndconnect . \
-  && git reset --hard v0.2.0 \
-########################################################
-# TODO: the make command is failing on the 'dep' stage #
-########################################################
+  && git reset --hard v0.2.1 \
   && make \
   && make install \
   && cp /go/bin/lndconnect /bin/
@@ -77,9 +74,6 @@ RUN addgroup -g ${GROUP_ID} -S lnd && \
 # Copy the compiled binaries from the builder image.
 COPY --from=builder /go/bin/lncli /bin/
 COPY --from=builder /go/bin/lnd /bin/
-###########################
-# TODO: fix line 42 issue #
-###########################
 COPY --from=builder /go/bin/lndconnect /bin/
 
 ## Set BUILD_VER build arg to break the cache here.
