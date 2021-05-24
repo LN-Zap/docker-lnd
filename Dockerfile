@@ -1,6 +1,13 @@
 # Builder image
-FROM golang:1.15.7-alpine as builder
-MAINTAINER Tom Kirkpatrick <tkp@kirkdesigns.co.uk>
+
+# The release binaries are compiled with go1.16.3, which is required by verifiers 
+# to arrive at the same result.
+FROM golang:1.16.4-alpine3.12 as builder
+
+# the MAINTAINER instruction is deprecated
+# https://docs.docker.com/engine/reference/builder/#maintainer-deprecated
+# MAINTAINER Tom Kirkpatrick <tkp@kirkdesigns.co.uk>
+LABEL authors="Tom Kirkpatrick tkp@kirkdesigns.co.uk"
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
@@ -18,11 +25,10 @@ WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 RUN git config --global user.email "tkp@kirkdesigns.co.uk" \
   && git config --global user.name "Tom Kirkpatrick" \
   && git clone https://github.com/lightningnetwork/lnd . \
-  && git reset --hard v0.12.1-beta \
+  && git reset --hard v0.13.0-beta.rc3 \
   && git remote add lnzap https://github.com/LN-Zap/lnd \
   && git fetch lnzap \
   && git cherry-pick aff55b5c766e2d57337234abc0100aee6697a9bd \
-  && git cherry-pick 55a1909da994936aa138a6cb3f787046ab0f9689 \
   && make \
   && make install tags="monitoring autopilotrpc chainrpc invoicesrpc routerrpc signrpc verrpc walletrpc watchtowerrpc wtclientrpc" \
   && cp /go/bin/lncli /bin/ \
@@ -32,13 +38,16 @@ RUN git config --global user.email "tkp@kirkdesigns.co.uk" \
 WORKDIR $GOPATH/src/github.com/LN-Zap/lndconnect
 RUN git clone https://github.com/LN-Zap/lndconnect . \
   && git reset --hard v0.2.0 \
+########################################################
+# TODO: the make command is failing on the 'dep' stage #
+########################################################
   && make \
   && make install \
   && cp /go/bin/lndconnect /bin/
 
 # Final image
 FROM alpine:3.12 as final
-MAINTAINER Tom Kirkpatrick <tkp@kirkdesigns.co.uk>
+LABEL authors="Tom Kirkpatrick tkp@kirkdesigns.co.uk"
 
 # Add utils.
 RUN apk --no-cache add \
@@ -68,6 +77,9 @@ RUN addgroup -g ${GROUP_ID} -S lnd && \
 # Copy the compiled binaries from the builder image.
 COPY --from=builder /go/bin/lncli /bin/
 COPY --from=builder /go/bin/lnd /bin/
+###########################
+# TODO: fix line 42 issue #
+###########################
 COPY --from=builder /go/bin/lndconnect /bin/
 
 ## Set BUILD_VER build arg to break the cache here.
