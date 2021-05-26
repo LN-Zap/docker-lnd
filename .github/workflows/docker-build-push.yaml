@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     
-      # this sets up QEMU which enables multi-arch support
+      # this sets up QEMU which enables emulation for multi-platform support
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       
@@ -27,10 +27,8 @@ jobs:
       
       # This step builds, tags and push the image to dockerhub with multiarch support
       - name: Build and push
-        id: docker_build
         uses: docker/build-push-action@v2
         with:
-          context: .
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
@@ -39,9 +37,26 @@ jobs:
             lnzap/lnd:${{ github.ref }}-alpine
             lnzap/lnd:${{ github.ref }}-alpine3.12
 
-      # This step outputs the image digest 
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+      # This step builds, tags and push the debug versions of the image to dockerhub with multiarch support
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          file: debug.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            lnzap/lnd:latest-debug
+            lnzap/lnd:${{ github.ref }}-debug
+            lnzap/lnd:${{ github.ref }}-alpine-debug
+            lnzap/lnd:${{ github.ref }}-alpine3.12-debug
+
+      # Smoke test for the recently pushed debug images
+      - name: Inspect
+        run: docker run lnzap/lnd:latest-debug sh lncli --version
+
+      # Smoke test for the recently pushed images
+      - name: Inspect
+        run: docker run lnzap/lnd:latest sh lncli --version
 
       # This step updates the dockerhub image readme with the one in the docs directory
       - name: Update docker description
