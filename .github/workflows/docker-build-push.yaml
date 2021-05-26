@@ -34,9 +34,9 @@ jobs:
           push: true
           tags: |
             lnzap/lnd:latest
-            lnzap/lnd:${{ github.ref }}
-            lnzap/lnd:${{ github.ref }}-alpine
-            lnzap/lnd:${{ github.ref }}-alpine3.12
+            lnzap/lnd:version
+            lnzap/lnd:version-alpine
+            lnzap/lnd:version-alpine3.12
 
       # This step builds, tags and push the debug versions of the image to dockerhub with multiarch support
       - name: Build and push
@@ -47,9 +47,9 @@ jobs:
           push: true
           tags: |
             lnzap/lnd:latest-debug
-            lnzap/lnd:${{ github.ref }}-debug
-            lnzap/lnd:${{ github.ref }}-alpine-debug
-            lnzap/lnd:${{ github.ref }}-alpine3.12-debug
+            lnzap/lnd:version-debug
+            lnzap/lnd:version-alpine-debug
+            lnzap/lnd:version-alpine3.12-debug
 
       # Smoke test for the recently pushed debug images
       - name: Inspect
