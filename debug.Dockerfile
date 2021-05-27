@@ -25,10 +25,10 @@ RUN git config --global user.email "tkp@kirkdesigns.co.uk" \
   && git remote add lnzap https://github.com/LN-Zap/lnd \
   && git fetch lnzap \
   && git cherry-pick aff55b5c766e2d57337234abc0100aee6697a9bd \
-  && make \
-  && make install tags="monitoring autopilotrpc chainrpc invoicesrpc routerrpc signrpc verrpc walletrpc watchtowerrpc wtclientrpc" \
-  && cp /go/bin/lncli-debug /bin/ \
-  && cp /go/bin/lnd-debug /bin/
+  && make tags="monitoring autopilotrpc chainrpc invoicesrpc routerrpc signrpc walletrpc watchtowerrpc wtclientrpc verrpc" \
+  && make install tags="monitoring autopilotrpc chainrpc invoicesrpc routerrpc signrpc walletrpc watchtowerrpc wtclientrpc verrpc" \
+  && cp lncli-debug /bin/ \
+  && cp lnd-debug /bin/
 
 # Grab and install the latest version of lndconnect.
 WORKDIR $GOPATH/src/github.com/LN-Zap/lndconnect
@@ -68,8 +68,8 @@ RUN addgroup -g ${GROUP_ID} -S lnd && \
   adduser -u ${USER_ID} -S lnd -G lnd -s /bin/bash -h /lnd lnd
 
 # Copy the compiled debug binaries from the builder image.
-COPY --from=builder /bin/lncli-debug /bin/
-COPY --from=builder /bin/lnd-debug /bin/
+COPY --from=builder /bin/lnd-debug /bin/lnd
+COPY --from=builder /bin/lncli-debug /bin/lncli
 COPY --from=builder /go/bin/lndconnect /bin/
 
 ## Set BUILD_VER build arg to break the cache here.
