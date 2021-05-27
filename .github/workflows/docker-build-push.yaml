@@ -31,29 +31,31 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       # checkout the code (git clone with fetch-dept=1)
-      - name: "Checkout Code"
-        uses: "actions/checkout@master"
+      - name: Checkout Code
+        uses: actions/checkout@master
 
       # This step builds, tags and push the image to dockerhub with multiarch support
-      - name: "Build image"
-        run: "docker build -t lnzap/lnzap:ci-test ."   
+      - name: Build image
+        run: docker build -t lnzap/lnzap:ci-test .
 
       # Smoke test for the recently pushed images
-      - name: "Smoke Test latest"
-        run: "docker run lnzap/lnzap:ci-test lncli --version"
+      - name: Image Smoke Test 
+        run: docker run lnzap/lnzap:ci-test lncli --version
 
       # Smoke test for the recently pushed images
-      - name: "Push image"
-        run: |
-          "docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}"
-          "docker push lnzap/lnzap:ci-test"
+      - name: Dockerhub login
+        run: docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
+      
+      # Push image to Dockerhub
+      - name: Push image to Dockerhub
+        run: docker push lnzap/lnzap:ci-test
 
       # This step updates the dockerhub image readme with the one in the docs directory
-      - name: "Update docker description"
-        uses: "peter-evans/dockerhub-description@v2"
+      - name: Update docker description
+        uses: peter-evans/dockerhub-description@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           short-description: "lnd + lncli + lndconnect"
-          repository: "lnzap/lnd"
+          repository: lnzap/lnd
           readme-filepath: "./docs/DOCKERHUB-IMAGE-README.md"
