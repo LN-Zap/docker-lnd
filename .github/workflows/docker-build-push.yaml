@@ -40,15 +40,15 @@ jobs:
 
       # Smoke test for the recently pushed images
       - name: Image Smoke Test 
-        run: docker run lnzap/lnzap:ci-test lncli --version | awk -F ' ' '{print $3}'
+        run:  ./.github/scripts/smoke-test.sh ${{ github.ref }} $(docker run lnzap/lnzap:ci-test lncli --version | awk -F ' ' '{print $3}')
 
       # Smoke test for the recently pushed images
       - name: Dockerhub login
         run: "docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}"
       
       # Push image to Dockerhub
-      #- name: Push image to Dockerhub
-      #  run: docker push lnzap/lnzap:ci-test
+      - name: Push image to Dockerhub
+        run: docker push lnzap/lnzap:ci-test
 
       # This step updates the dockerhub image readme with the one in the docs directory
       - name: Update docker description
