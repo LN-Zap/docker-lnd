@@ -47,8 +47,8 @@ jobs:
         run: "docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}"
       
       # Push image to Dockerhub
-      - name: Push image to Dockerhub
-        run: docker push lnzap/lnzap:ci-test
+      #- name: Push image to Dockerhub
+      #  run: docker push lnzap/lnzap:ci-test
 
       # This step updates the dockerhub image readme with the one in the docs directory
       - name: Update docker description
