@@ -8,24 +8,6 @@ on:
     branches:
       - "feature/docker-build-push-action"
 
-  workflow_dispatch:
-    inputs:
-      
-      docker_organization:
-        description: 'the name of the docker organization'
-        required: true
-        default: 'lnzap'
-
-      image_name:
-        description: 'Name of the image. Should be specified with neither organization name nor tags.'
-        required: true
-        default: 'lnd'
-      
-      image_tag:
-        description: 'Image tag to set for the built image.'
-        required: true
-        default: 'latest'
-
 jobs:
   docker:
     runs-on: "ubuntu-latest"
@@ -34,28 +16,38 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@master
 
-      # This step builds, tags and push the image to dockerhub with multiarch support
+      # builds the image
       - name: Build image
         run: docker build -t lnzap/lnd:ci-test .
 
-      # Smoke test for the recently pushed images
-      #- name: Image Smoke Test 
-      #  run:  ./.github/scripts/smoke-test.sh ${{ github.ref }} $(docker run lnzap/lnd:ci-test lncli --version | awk -F ' ' '{print $3}')
+      # builds the debug image
+      - name: Build debug image
+        run: docker build -t lnzap/lnd:debug-ci-test -f debug.Dockerfile .
 
-      # Smoke test for the recently pushed images
+      # Smoke test for the recently built image
+      - name: Image Smoke Test (regular)
+        run:  ./.github/scripts/smoke-test.sh ${{ github.ref }} $(docker run lnzap/lnd:ci-test lncli --version | awk -F ' ' '{print $3}')
+
+      # Smoke test for the recently built debug image
+      - name: Image Smoke Test (debug)
+        run:  ./.github/scripts/smoke-test.sh ${{ github.ref }} $(docker run lnzap/lnd:debug-ci-test lncli --version | awk -F ' ' '{print $3}')
+
+      # login to dockerhub
       - name: Dockerhub login
         run: "docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}"
       
-      # Push image to Dockerhub
+      # Push images to Dockerhub
       - name: Push image to Dockerhub
-        run: docker push lnzap/lnd:ci-test
+        run: |
+          docker push lnzap/lnd:ci-test
+          docker push lnzap/lnd:debug-ci-test
 
       # This step updates the dockerhub image readme with the one in the docs directory
-      - name: Update docker description
-        uses: peter-evans/dockerhub-description@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          short-description: "lnd + lncli + lndconnect"
-          repository: lnzap/lnd
-          readme-filepath: "./docs/DOCKERHUB-IMAGE-README.md"
+      #- name: Update docker description
+      #  uses: peter-evans/dockerhub-description@v2
+      #  with:
+      #    username: ${{ secrets.DOCKER_USERNAME }}
+      #    password: ${{ secrets.DOCKER_PASSWORD }}
+      #    short-description: "lnd + lncli + lndconnect"
+      #    repository: lnzap/lnd
+      #    readme-filepath: "./docs/DOCKERHUB-IMAGE-README.md"
