@@ -8,22 +8,43 @@ on:
     branches:
       - "feature/docker-build-push-action"
 
+  workflow_dispatch:
+    inputs:
+      
+      docker_organization:
+        description: 'the name of the docker organization'
+        required: true
+        default: 'lnzap'
+
+      image_name:
+        description: 'Name of the image. Should be specified with neither organization name nor tags.'
+        required: true
+        default: 'lnd'
+      
+      image_tag:
+        description: 'Image tag to set for the built image.'
+        required: true
+        default: 'latest'
+
 jobs:
   docker:
     runs-on: "ubuntu-latest"
     steps:
-      
+      # checkout the code (git clone with fetch-dept=1)
+      - name: "Checkout Code"
+        uses: actions/checkout@master
+
       # This step builds, tags and push the image to dockerhub with multiarch support
       - name: "Build and push"
-        run: docker build -t lnzap/lnd:ci-test .   
+        run: docker build -t ${{ github.event.inputs.docker_organization }}/${{ github.event.inputs.image_name }}:${{ github.event.inputs.image_tag }} .   
 
       # Smoke test for the recently pushed images
       - name: "Smoke Test latest"
-        run: "docker run lnzap/lnd:ci-test sh lncli --version"
+        run: "docker run ${{ github.event.inputs.docker_organization }}/${{ github.event.inputs.image_name }}:${{ github.event.inputs.image_tag }} sh lncli --version"
 
       # Smoke test for the recently pushed images
       - name: "Smoke Test latest"
-        run: "docker push lnzap/lnd:ci-test --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}"
+        run: "docker push ${{ github.event.inputs.docker_organization }}/${{ github.event.inputs.image_name }}:${{ github.event.inputs.image_tag }} --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}"
 
       # This step updates the dockerhub image readme with the one in the docs directory
       - name: "Update docker description"
