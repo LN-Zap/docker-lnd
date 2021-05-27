@@ -1,9 +1,11 @@
 set -e
 
-echo "the release tag is => $1"
-echo "lncli version is   => $2"
+release_tag=$(echo $1 | awk -F '/' '{print $3}')
 
-if [ $1 == $2 ]
+echo "release tag   => $release_tag"
+echo "lncli version => $2"
+
+if [ $release_tag == $2 ]
 then
   exit 0
 else
