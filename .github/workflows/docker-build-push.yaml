@@ -40,11 +40,11 @@ jobs:
 
       # Smoke test for the recently pushed images
       - name: Image Smoke Test 
-        run: docker run lnzap/lnzap:ci-test lncli --version
+        run: docker run lnzap/lnzap:ci-test lncli --version | awk -F ' ' '{print $3}'
 
       # Smoke test for the recently pushed images
       - name: Dockerhub login
-        run: docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
+        run: docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin ${{ secrets.DOCKER_PASSWORD }}
       
       # Push image to Dockerhub
       - name: Push image to Dockerhub
