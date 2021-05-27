@@ -22,19 +22,19 @@ jobs:
 
       # builds the image
       - name: Build image
-        run: docker build -t lnzap/lnd:$RELEASE_TAG .
+        run: docker build -t lnzap/lnd:$(echo $RELEASE_TAG) .
 
       # builds the debug image
       - name: Build debug image
-        run: docker build -t lnzap/lnd:$RELEASE_TAG-debug -f debug.Dockerfile .
+        run: docker build -t lnzap/lnd:$(echo $RELEASE_TAG)-debug -f debug.Dockerfile .
 
       # Smoke test for the recently built image
       #- name: Image Smoke Test (regular)
-      #  run:  ./.github/scripts/smoke-test.sh $RELEASE_TAG $(docker run lnzap/lnd:ci-test lncli --version | awk -F ' ' '{print $3}')
+      #  run:  ./.github/scripts/smoke-test.sh $(echo $RELEASE_TAG) $(docker run lnzap/lnd:ci-test lncli --version | awk -F ' ' '{print $3}')
 
       # Smoke test for the recently built debug image
       #- name: Image Smoke Test (debug)
-      #  run:  ./.github/scripts/smoke-test.sh $RELEASE_TAG $(docker run lnzap/lnd:debug-ci-test lncli --version | awk -F ' ' '{print $3}')
+      #  run:  ./.github/scripts/smoke-test.sh $(echo $RELEASE_TAG) $(docker run lnzap/lnd:debug-ci-test lncli --version | awk -F ' ' '{print $3}')
 
       # login to dockerhub
       - name: Dockerhub login
@@ -43,8 +43,8 @@ jobs:
       # Push images to Dockerhub
       - name: Push image to Dockerhub
         run: |
-          docker push lnzap/lnd:$RELEASE_TAG-debug
-          docker push lnzap/lnd:$RELEASE_TAG-debug
+          docker push lnzap/lnd:$(echo $RELEASE_TAG)-debug
+          docker push lnzap/lnd:$(echo $RELEASE_TAG)-debug
 
       # This step updates the dockerhub image readme with the one in the docs directory
       #- name: Update docker description
