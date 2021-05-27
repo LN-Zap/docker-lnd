@@ -36,15 +36,15 @@ jobs:
 
       # This step builds, tags and push the image to dockerhub with multiarch support
       - name: "Build and push"
-        run: docker build -t ${{ github.event.inputs.docker_organization }}/${{ github.event.inputs.image_name }}:${{ github.event.inputs.image_tag }} .   
+        run: docker build -t lnzap/lnzap:ci-test .   
 
       # Smoke test for the recently pushed images
       - name: "Smoke Test latest"
-        run: "docker run ${{ github.event.inputs.docker_organization }}/${{ github.event.inputs.image_name }}:${{ github.event.inputs.image_tag }} sh lncli --version"
+        run: "docker run lnzap/lnzap:ci-test lncli --version"
 
       # Smoke test for the recently pushed images
       - name: "Smoke Test latest"
-        run: "docker push ${{ github.event.inputs.docker_organization }}/${{ github.event.inputs.image_name }}:${{ github.event.inputs.image_tag }} --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}"
+        run: "docker push lnzap/lnzap:ci-test --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}"
 
       # This step updates the dockerhub image readme with the one in the docs directory
       - name: "Update docker description"
