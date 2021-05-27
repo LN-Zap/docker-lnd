@@ -13,43 +13,17 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       
-      # Setup Q Emulator
-      - name: "Set up QEMU"
-        uses: "docker/setup-qemu-action@v1"
-      
-      # Setup docker BuildX
-      - name: "Set up Docker Buildx"
-        uses: "docker/setup-buildx-action@v1"
-      
-      # this step logs in into dockerhub
-      - name: "Login to DockerHub"
-        uses: "docker/login-action@v1" 
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      
       # This step builds, tags and push the image to dockerhub with multiarch support
       - name: "Build and push"
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: "lnzap/lnd:ci-test-test"
-
-      # This step builds, tags and push the debug versions of the image to dockerhub with multiarch support
-      - name: "Build and push"
-        uses: "docker/build-push-action@v2"
-        with:
-          context: .
-          file: "debug.Dockerfile"
-          push: true
-          tags: "lnzap/lnd:ci-test-debug"
+        run: docker build -t lnzap/lnd:ci-test .   
 
       # Smoke test for the recently pushed images
       - name: "Smoke Test latest"
-        run: "docker run lnzap/lnd:ci-latest sh lncli --version"
-      - name: "Smoke Test latest-debug"
-        run: "docker run lnzap/lnd:ci-latest-debug sh lncli --version"
+        run: "docker run lnzap/lnd:ci-test sh lncli --version"
+
+      # Smoke test for the recently pushed images
+      - name: "Smoke Test latest"
+        run: "docker push lnzap/lnd:ci-test --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}"
 
       # This step updates the dockerhub image readme with the one in the docs directory
       - name: "Update docker description"
