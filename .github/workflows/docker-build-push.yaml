@@ -4,9 +4,6 @@ on:
   release:
     types: 
       - "published"
-  push: 
-    branches:
-      - "feature/docker-build-push-action"
 
 jobs:
   docker:
@@ -28,19 +25,19 @@ jobs:
       - name: Build debug image
         run: docker build -t lnzap/lnd:${{ env.RELEASE_TAG }}-debug -f debug.Dockerfile .
 
-      # Smoke test for the recently built image
+      # Smoke test for the previously built image
       - name: Image Smoke Test (regular)
-        run:  ./.github/scripts/smoke-test.sh ${{ env.RELEASE_TAG }} $(docker run lnzap/lnd:ci-test lncli --version | awk -F ' ' '{print $3}')
+        run:  ./.github/scripts/smoke-test.sh ${{ env.RELEASE_TAG }} $(docker run lnzap/lnd:${{ env.RELEASE_TAG }} lncli --version | awk -F ' ' '{print $3}')
 
-      # Smoke test for the recently built debug image
+      # Smoke test for the previously built debug image
       - name: Image Smoke Test (debug)
-        run:  ./.github/scripts/smoke-test.sh ${{ env.RELEASE_TAG }} $(docker run lnzap/lnd:debug-ci-test lncli --version | awk -F ' ' '{print $3}')
+        run:  ./.github/scripts/smoke-test.sh ${{ env.RELEASE_TAG }} $(docker run lnzap/lnd:${{ env.RELEASE_TAG }}-debug lncli --version | awk -F ' ' '{print $3}')
 
       # login to dockerhub
       - name: Dockerhub login
         run: "docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}"
       
-      # Push images to Dockerhub
+      # Push both images to Dockerhub
       - name: Push image to Dockerhub
         run: |
           docker push lnzap/lnd:${{ env.RELEASE_TAG }}
