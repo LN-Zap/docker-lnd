@@ -3,48 +3,52 @@ name: "docker-build-push"
 on:
   release:
     types: 
-      - published
+      - "published"
   push: 
+    branches:
+      - "feature/docker-build-push-action"
 
 jobs:
   docker:
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-latest"
     steps:
 
       # this step logs in into dockerhub
-      - name: Login to DockerHub
-        uses: docker/login-action@v1 
+      - name: "Login to DockerHub"
+        uses: "docker/login-action@v1" 
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       
       # This step builds, tags and push the image to dockerhub with multiarch support
-      - name: Build and push
+      - name: "Build and push"
         uses: docker/build-push-action@v2
         with:
+          context: .
           push: true
-          tags: lnzap/lnd:ci-test-test
+          tags: "lnzap/lnd:ci-test-test"
 
       # This step builds, tags and push the debug versions of the image to dockerhub with multiarch support
-      - name: Build and push
-        uses: docker/build-push-action@v2
+      - name: "Build and push"
+        uses: "docker/build-push-action@v2"
         with:
-          file: debug.Dockerfile
+          context: .
+          file: "debug.Dockerfile"
           push: true
-          tags: lnzap/lnd:ci-test-debug
+          tags: "lnzap/lnd:ci-test-debug"
 
       # Smoke test for the recently pushed images
-      - name: Smoke Test latest
-        run: docker run lnzap/lnd:ci-latest sh lncli --version
-      - name: Smoke Test latest-debug
-        run: docker run lnzap/lnd:ci-latest-debug sh lncli --version
+      - name: "Smoke Test latest"
+        run: "docker run lnzap/lnd:ci-latest sh lncli --version"
+      - name: "Smoke Test latest-debug"
+        run: "docker run lnzap/lnd:ci-latest-debug sh lncli --version"
 
       # This step updates the dockerhub image readme with the one in the docs directory
-      - name: Update docker description
-        uses: peter-evans/dockerhub-description@v2
+      - name: "Update docker description"
+        uses: "peter-evans/dockerhub-description@v2"
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           short-description: "lnd + lncli + lndconnect"
-          repository: LN-Zap/docker-lnd
-          readme-filepath: ./docs/DOCKERHUB-IMAGE-README.md
+          repository: "lnzap/lnd"
+          readme-filepath: "./docs/DOCKERHUB-IMAGE-README.md"
