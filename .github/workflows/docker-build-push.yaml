@@ -25,12 +25,12 @@ jobs:
         run: docker build -t lnzap/lnd:debug-ci-test -f debug.Dockerfile .
 
       # Smoke test for the recently built image
-      - name: Image Smoke Test (regular)
-        run:  ./.github/scripts/smoke-test.sh ${{ github.ref }} $(docker run lnzap/lnd:ci-test lncli --version | awk -F ' ' '{print $3}')
+      #- name: Image Smoke Test (regular)
+      #  run:  ./.github/scripts/smoke-test.sh ${{ github.ref }} $(docker run lnzap/lnd:ci-test lncli --version | awk -F ' ' '{print $3}')
 
       # Smoke test for the recently built debug image
-      - name: Image Smoke Test (debug)
-        run:  ./.github/scripts/smoke-test.sh ${{ github.ref }} $(docker run lnzap/lnd:debug-ci-test lncli --version | awk -F ' ' '{print $3}')
+      #- name: Image Smoke Test (debug)
+      #  run:  ./.github/scripts/smoke-test.sh ${{ github.ref }} $(docker run lnzap/lnd:debug-ci-test lncli --version | awk -F ' ' '{print $3}')
 
       # login to dockerhub
       - name: Dockerhub login
