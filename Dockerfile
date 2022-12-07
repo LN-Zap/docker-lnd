@@ -11,7 +11,7 @@ WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 RUN git config --global user.email "luizfilipester@gmail.com" \
   && git config --global user.name "Luiz Parreira" \
   && git clone https://github.com/lightningnetwork/lnd . \
-  && git reset --hard v0.15.2-beta \
+  && git reset --hard v0.15.5-beta \
   && git remote add ln https://github.com/lightningnetwork/lnd \
   && git fetch ln \
   && make \
